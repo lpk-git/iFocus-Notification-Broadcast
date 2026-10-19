@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A lightweight browser-based tool for preparing and opening WhatsApp notification messages for multiple recipients.">
+  <title>iFocus Notification Broadcast</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Top Branding Bar -->
+    <header class="app-header">
+      <div class="header-content">
+        <div class="header-left">
+          <button type="button" class="home-btn" id="home-btn" aria-label="Home" title="Home">
+            <svg class="home-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          </button>
+          <div class="brand-badge">
+            <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            <span class="brand-title">iFocus Notification Broadcast</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container with Centered Card -->
+    <main class="main-content">
+      <div class="card-wrapper">
+        <!-- Status Alert Notification -->
+        <div id="status-alert" class="status-alert hidden" role="status" aria-live="polite">
+          <div class="status-alert-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <div class="status-alert-content">
+            <p id="status-alert-text"></p>
+          </div>
+          <button type="button" class="status-alert-close" id="status-alert-close" aria-label="Dismiss message">
+            &times;
+          </button>
+        </div>
+
+        <div class="sender-card">
+          <!-- Broadcast Form Section -->
+          <div id="form-section">
+            <div class="card-header">
+              <h1 class="card-title">iFocus Notification Broadcast</h1>
+              <p class="card-subtitle">Send a common notification to multiple WhatsApp recipients with manual confirmation.</p>
+            </div>
+
+            <form id="broadcast-form" novalidate>
+              <!-- WhatsApp Numbers Field -->
+              <div class="form-group" id="numbers-group">
+                <div class="label-wrapper">
+                  <label for="whatsapp-numbers" class="form-label">
+                    WhatsApp Numbers <span class="required-mark" aria-hidden="true">*</span>
+                  </label>
+                  <span class="recipient-counter" id="recipient-counter" aria-live="polite">0 recipients detected</span>
+                </div>
+                
+                <textarea 
+                  id="whatsapp-numbers" 
+                  name="whatsappNumbers" 
+                  class="form-control" 
+                  rows="4" 
+                  placeholder="919876543210, 919812345678, 919900001234"
+                  autocomplete="off"
+                  spellcheck="false"
+                  aria-describedby="numbers-helper numbers-error numbers-duplicate"
+                  aria-required="true"
+                ></textarea>
+                
+                <p class="helper-text" id="numbers-helper">
+                  Enter WhatsApp numbers with country code, separated by commas.
+                </p>
+                
+                <div class="field-error hidden" id="numbers-error" role="alert">
+                  <svg class="error-icon" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
+                  <span class="error-text"></span>
+                </div>
+
+                <div class="duplicate-info hidden" id="numbers-duplicate" role="status" aria-live="polite">
+                  <svg class="info-icon" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                  </svg>
+                  <span class="duplicate-text"></span>
+                </div>
+              </div>
+
+              <!-- Message Field -->
+              <div class="form-group" id="message-group">
+                <div class="label-wrapper">
+                  <label for="message-text" class="form-label">
+                    Message <span class="required-mark" aria-hidden="true">*</span>
+                  </label>
+                  <span class="char-counter" id="char-counter">0 / 2000 characters</span>
+                </div>
+                
+                <textarea 
+                  id="message-text" 
+                  name="messageText" 
+                  class="form-control" 
+                  rows="6" 
+                  placeholder="Type your notification message here..."
+                  aria-describedby="message-error"
+                  aria-required="true"
+                ></textarea>
+                
+                <div class="field-error hidden" id="message-error" role="alert">
+                  <svg class="error-icon" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
+                  <span class="error-text"></span>
+                </div>
+              </div>
+
+              <!-- Consent / Responsible Use Acknowledgement -->
+              <div class="form-group consent-group" id="consent-group">
+                <label class="consent-checkbox-label" for="consent-checkbox">
+                  <input 
+                    type="checkbox" 
+                    id="consent-checkbox" 
+                    name="consentCheckbox" 
+                    class="consent-checkbox"
+                    aria-describedby="consent-error"
+                  >
+                  <span class="consent-text">
+                    I confirm that these recipients expect or have agreed to receive this message.
+                  </span>
+                </label>
+                <div class="field-error hidden" id="consent-error" role="alert">
+                  <svg class="error-icon" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
+                  <span class="error-text">Please confirm that recipients expect or have agreed to receive this message.</span>
+                </div>
+              </div>
+
+              <!-- Send Button -->
+              <div class="form-actions">
+                <button type="submit" id="send-btn" class="btn btn-primary">
+                  <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                  <span>Send</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Recipient Queue Section -->
+          <div id="queue-section" class="queue-section hidden">
+            <div class="card-header">
+              <div class="queue-header-wrap">
+                <h1 class="card-title">Recipient Queue</h1>
+                <span class="queue-ready-badge" id="queue-ready-badge">Recipients Ready: 0</span>
+              </div>
+              <p class="card-subtitle">Open each recipient in WhatsApp to review and send your broadcast message</p>
+            </div>
+
+            <!-- Queue Stats Summary -->
+            <div class="queue-stats-grid">
+              <div class="queue-stat-card">
+                <span class="stat-label">Total</span>
+                <span class="stat-value" id="stat-total">0</span>
+              </div>
+              <div class="queue-stat-card">
+                <span class="stat-label">Current</span>
+                <span class="stat-value" id="stat-current">-</span>
+              </div>
+              <div class="queue-stat-card">
+                <span class="stat-label">Opened</span>
+                <span class="stat-value text-success" id="stat-opened">0</span>
+              </div>
+              <div class="queue-stat-card">
+                <span class="stat-label">Remaining</span>
+                <span class="stat-value text-muted" id="stat-remaining">0</span>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="queue-progress-bar-wrap" aria-label="Broadcast progress">
+              <div class="queue-progress-bar" id="queue-progress-bar" style="width: 0%;"></div>
+            </div>
+
+            <!-- Queue List -->
+            <div class="queue-list-container" id="queue-list" role="region" aria-label="Recipient List">
+              <!-- Dynamically populated rows -->
+            </div>
+
+            <!-- Current Target Callout Box (hidden once all processed) -->
+            <div class="current-recipient-card" id="current-recipient-card">
+              <div class="current-card-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+              </div>
+              <div class="current-card-details">
+                <span class="current-card-sub">Next Recipient in Line</span>
+                <span class="current-card-number" id="current-card-number">-</span>
+              </div>
+            </div>
+
+            <!-- Final Completion State Banner (Shown when queue complete) -->
+            <div class="queue-completed-banner hidden" id="queue-completed-banner" role="status" aria-live="polite">
+              <div class="completed-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              </div>
+              <h2 class="completed-title">All recipients processed</h2>
+              <p class="completed-text" id="completed-text">0 of 0 recipients opened in WhatsApp.</p>
+            </div>
+
+            <!-- Queue Action Buttons -->
+            <div class="queue-actions">
+              <button type="button" id="queue-open-btn" class="btn btn-primary btn-queue-action">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+                <span id="queue-open-btn-text">Open in WhatsApp</span>
+              </button>
+
+              <button type="button" id="queue-reset-btn" class="btn btn-primary btn-queue-action hidden">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 4v6h-6"></path>
+                  <path d="M1 20v-6h6"></path>
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+                <span>Start New Broadcast</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Privacy & Responsible Usage Notices -->
+        <div class="card-footer-notices">
+          <p class="notice-item">
+            <strong>Privacy:</strong> Recipient numbers and message content are processed locally by this application and are not intentionally stored or sent to an application backend. When you choose Open in WhatsApp, the selected recipient and message are passed to WhatsApp to prepare the conversation.
+          </p>
+          <p class="notice-item">
+            <strong>Responsible use:</strong> This tool is intended for legitimate communication only. Please contact only recipients who expect or have agreed to receive your messages.
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Confirmation Modal / Dialog -->
+    <div id="confirmation-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <div class="modal-icon-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <div>
+              <h2 id="modal-title" class="modal-title">Confirm Broadcast</h2>
+              <p class="modal-subtitle">Review recipient details before continuing</p>
+            </div>
+          </div>
+          <button type="button" class="modal-close-btn" id="modal-close-x" aria-label="Close dialog">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Recipient Summary -->
+          <div class="info-block">
+            <span class="info-label">Recipients Detected</span>
+            <div class="recipient-badge-row">
+              <span class="badge badge-pill" id="modal-recipient-count">0 Recipients</span>
+            </div>
+            <div class="recipients-list-preview" id="modal-recipients-preview" aria-label="Detected recipients list">
+              <!-- Rendered parsed numbers -->
+            </div>
+          </div>
+
+          <!-- Message Preview -->
+          <div class="info-block">
+            <span class="info-label">Common Message</span>
+            <div class="message-preview-box">
+              <pre id="modal-message-preview"></pre>
+            </div>
+          </div>
+
+          <!-- Warning Notice -->
+          <div class="warning-callout" role="note">
+            <div class="warning-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+            </div>
+            <div class="warning-text">
+              <strong>Notice:</strong> WhatsApp will be opened for the recipients.
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="modal-cancel-btn" class="btn btn-secondary">
+            Cancel
+          </button>
+          <button type="button" id="modal-confirm-btn" class="btn btn-primary">
+            Confirm & Continue
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Home Confirmation Modal -->
+    <div id="home-confirm-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="home-confirm-title">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <div class="modal-icon-badge modal-icon-warning">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+            </div>
+            <div>
+              <h2 id="home-confirm-title" class="modal-title">Broadcast in Progress</h2>
+              <p class="modal-subtitle">Confirm navigation to Home</p>
+            </div>
+          </div>
+          <button type="button" class="modal-close-btn" id="home-confirm-close-x" aria-label="Close dialog">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <p class="confirm-modal-description">
+            A broadcast is currently in progress. Returning Home will clear the current broadcast. Do you want to continue?
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="home-confirm-cancel-btn" class="btn btn-secondary">
+            Cancel
+          </button>
+          <button type="button" id="home-confirm-return-btn" class="btn btn-primary btn-danger-action">
+            Return Home
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Application Footer -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <p class="footer-text">iFocus Notification Broadcast &bull; Version 1.0</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
