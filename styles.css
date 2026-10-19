@@ -1163,18 +1163,56 @@ body {
   border-top: 1px solid var(--color-border);
   background: var(--color-bg-card);
   padding: 1.25rem 1.5rem;
-  text-align: center;
 }
 
 .footer-content {
   max-width: 900px;
   margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
 }
 
-.footer-text {
+.footer-left {
+  display: flex;
+  align-items: center;
+}
+
+.footer-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  text-align: right;
+}
+
+.footer-text,
+.footer-attribution,
+.footer-copyright {
   font-size: 0.8125rem;
   color: var(--color-text-muted);
   font-weight: 500;
+  line-height: 1.45;
+}
+
+@media (max-width: 640px) {
+  .footer-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+  }
+
+  .footer-left {
+    justify-content: center;
+  }
+
+  .footer-right {
+    align-items: center;
+    text-align: center;
+  }
 }
 
 /* Extra Mobile Polish */
