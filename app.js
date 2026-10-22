@@ -64,6 +64,7 @@
 
   // Header & Home Navigation Elements
   const homeBtn = document.getElementById('home-btn');
+  const themeToggleBtn = document.getElementById('theme-toggle-btn');
   const homeConfirmModal = document.getElementById('home-confirm-modal');
   const homeConfirmCloseX = document.getElementById('home-confirm-close-x');
   const homeConfirmCancelBtn = document.getElementById('home-confirm-cancel-btn');
@@ -873,7 +874,94 @@
     resetToInitialForm();
   });
 
+  // ==========================================================================
+  // Theme Management (Light / Dark Theme)
+  // ==========================================================================
+  const THEME_STORAGE_KEY = 'ifocus_theme';
+
+  /**
+   * Apply light or dark theme attributes to <html> and update toggle button.
+   * 
+   * @param {'light'|'dark'} theme
+   */
+  function applyTheme(theme) {
+    const isDark = theme === 'dark';
+    if (isDark) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      if (themeToggleBtn) {
+        themeToggleBtn.setAttribute('aria-label', 'Switch to light mode');
+        themeToggleBtn.setAttribute('title', 'Switch to light mode');
+      }
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      if (themeToggleBtn) {
+        themeToggleBtn.setAttribute('aria-label', 'Switch to dark mode');
+        themeToggleBtn.setAttribute('title', 'Switch to dark mode');
+      }
+    }
+  }
+
+  /**
+   * Safely retrieve the user's stored theme preference.
+   * Only stores/retrieves UI theme preference; never stores recipient or message data.
+   * 
+   * @returns {string|null}
+   */
+  function getSavedTheme() {
+    try {
+      return localStorage.getItem(THEME_STORAGE_KEY);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /**
+   * Safely store the user's theme preference in localStorage.
+   * 
+   * @param {'light'|'dark'} theme
+   */
+  function saveTheme(theme) {
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch (e) {
+      // Storage unavailable or disabled
+    }
+  }
+
+  /**
+   * Toggle between light and dark themes immediately without affecting
+   * form state, validation, recipient queue, or WhatsApp workflows.
+   */
+  function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(nextTheme);
+    saveTheme(nextTheme);
+  }
+
+  /**
+   * Initialize theme on load:
+   * 1. Check for previously selected theme in localStorage.
+   * 2. If 'dark', apply dark theme.
+   * 3. Otherwise keep default light theme.
+   * 4. Attach click listener to theme toggle button.
+   */
+  function initTheme() {
+    const savedTheme = getSavedTheme();
+    if (savedTheme === 'dark') {
+      applyTheme('dark');
+    } else {
+      applyTheme('light');
+    }
+
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', toggleTheme);
+    }
+  }
+
   // Initial setup
+  initTheme();
   updateLiveCounters();
 
 })();
+
